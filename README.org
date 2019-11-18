@@ -1,0 +1,65 @@
+#+TITLE: NixOs on a Surface Go
+
+These are some brief notes on installing and running [[https://nixos.org][NixOs]] on a Surface Go. It assumes you
+are familiar with linux.
+
+This repo also has my configuration, dotfiles and any other tweaks I find
+useful for this tablet.
+
+* Prep
+
+The firmware for the wireless (QCA6174 Ath10k) will not work for the install
+(NixOs 19.09) and the tablet has a single USB-C port so you will need a USB hub
+with an ethernet connection and a USB drive port.
+
+- Create a liveCD image and copy it to a USB drive
+  [[https://nixos.org/nixos/download.html]]
+- In UEFI Menu, turn off Secure Boot and move the usb storage up the list for
+  boot order
+- Boot into the install media
+
+* Partition and format disk
+
+I'm completely removing Microsoft OS in this install, I've tried dual booting on the
+surface go and found I never booted into the MS side so it's a waste of space.
+
+Went for a simple four primary-partitions scheme:
+
+|-------+------+-------|
+| UEFI  | FAT  |       |
+| Swap  | Swap |       |
+| /home | ext4 | 40 Gb |
+| /     | ext4 | 69 Gb |
+|-------+------+-------|
+
+Follow the instructions in [[https://nixos.org/nixos/manual/index.html#sec-installation-partitioning][NixOs Manual: partitioning]], I used ~cfdisk~. Reformat
+the partitions according to manual.
+
+* Initial install
+
+Mount the partitions following the manual. Also mount ~/home~ to ~/mnt/home~, and
+use ~swapon~.
+
+Run
+#+BEGIN_SRC
+# nixos-generate-config --root /mnt
+#+END_SRC
+The partitioning and swap with be detected by the script and configured,
+which is why you should mount all the partitions and turn on swap.
+
+You'll have either ~vim~ or ~nano~ available depending on install media so go ahead
+and add a user and some packages to the config:
+#+BEGIN_SRC
+# vim /mnt/etc/nixos/configuration.nix
+#+END_SRC
+
+Do the installation
+#+BEGIN_SRC
+# nixos-install
+#+END_SRC
+
+Set the root password and reboot.
+
+* WiFi
+
+ We'll setup nix to replace the wireless firmware on builds.
