@@ -6,6 +6,12 @@ are familiar with linux.
 This repo also has my configuration, dotfiles and any other tweaks I find
 useful for this tablet.
 
+#+begin_quote
+Disclaimer: I'm new to NixOs. I switch distributions frequently though and I've used all
+the main ones. My favourite by far is Arch but keeping up with the changes is a
+little too intense for a secondary machine.
+#+end_quote
+
 * Prep
 
 The firmware for the wireless (QCA6174 Ath10k) will not work for the install
