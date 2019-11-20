@@ -31,12 +31,12 @@ surface go and found I never booted into the MS side so it's a waste of space.
 
 Went for a simple four primary-partitions scheme:
 
-|-------+------+-------|
-| UEFI  | FAT  |       |
-| Swap  | Swap |       |
-| /home | ext4 | 40 Gb |
-| /     | ext4 | 69 Gb |
-|-------+------+-------|
+|-------+------+--------|
+| UEFI  | FAT  | 247 Mb |
+| Swap  | Swap | 10 Gb  |
+| /home | ext4 | 40 Gb  |
+| /     | ext4 | 69 Gb  |
+|-------+------+--------|
 
 Follow the instructions in [[https://nixos.org/nixos/manual/index.html#sec-installation-partitioning][NixOs Manual: partitioning]], I used ~cfdisk~. Reformat
 the partitions according to manual.
@@ -68,4 +68,25 @@ Set the root password and reboot.
 
 * WiFi
 
- We'll setup nix to replace the wireless firmware on builds.
+ We'll setup nix to replace the wireless firmware on builds. Added the following script in ~/etc/nixos/~:
+#+BEGIN_SRC
+# qca6174_firmware.nix
+{stdenv, pkgs}:
+stdenv.mkDerivation {
+  name = "surface-wifi-firmware";
+  src = ./surface-wifi;
+  priority = 1;
+  installPhase = ''
+    mkdir -p $out/lib/firmware/ath10k
+    cp -r $src/* $out/lib/firmware/ath10k
+  '';
+}
+#+END_SRC
+then grabbed firmware files from [[https://github.com/mexisme/sboehler-nixos-config]] into the directory ~surface-wifi/~.
+
+Inside ~configuration.nix~ call the function with
+#+BEGIN_SRC
+  hardware.firmware = with pkgs; [
+    (callPackage ./qca6174_firmware.nix {})
+  ];
+#+END_SRC
