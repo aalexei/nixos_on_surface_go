@@ -8,7 +8,6 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      #./modules/surface-wifi.nix
     ];
 
   boot.kernelParams = [ "mem_sleep_default=deep" ];
@@ -17,13 +16,6 @@
   hardware.enableRedistributableFirmware = true;
   hardware.bluetooth.enable = true;
 
-  #let 
-  #  qca6174_firmware = pkgs.callPackage ./qca6174_firmware.nix { };
-  #in
-  #{
-  #  hardware.firmware = with pkgs; [
-  #  qca6174_firmware ];
-  #}
   hardware.firmware = with pkgs; [
     (callPackage ./qca6174_firmware.nix {})
   ];
